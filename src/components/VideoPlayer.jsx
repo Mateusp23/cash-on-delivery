@@ -2,7 +2,7 @@ import React from 'react';
 
 const VideoPlayer = ({ headline, subheadline, videoUrl }) => (
   <div className="mb-12 text-center px-4">
-    <h1 className="text-3xl font-extrabold text-gray-900 mb-4 leading-tight">
+    <h1 className="text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
       {headline}
     </h1>
     {subheadline && (
