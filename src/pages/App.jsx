@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { fetchPageData, postPurchaseData } from './services/productService';
-import VideoPlayer from './components/VideoPlayer';
-import ProductList from './components/ProductList';
-import { convertToEmbedUrl } from './utils/videoConverter';
-import LoadingSpinner from './components/LoadingSpinner';
-import PurchaseModal from './components/PurchaseModal';
+import { fetchPageData, postPurchaseData } from '../services/productService';
+import VideoPlayer from '../components/VideoPlayer';
+import ProductList from '../components/ProductList';
+import { convertToEmbedUrl } from '../utils/videoConverter';
+import LoadingSpinner from '../components/LoadingSpinner';
+import PurchaseModal from '../components/PurchaseModal';
+import ThankYouScreen from './ThankYou';
 
 function App() {
   const [data, setData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [isThankYouScreenVisible, setIsThankYouScreenVisible] = useState(false);
 
   const handleBuyClick = (productId) => {
     setSelectedProductId(productId);
     setIsModalOpen(true);
-    console.log(selectedProductId, "produtoid");
   };
 
   const handleCloseModal = () => {
@@ -30,17 +31,19 @@ function App() {
 
     try {
       const response = await postPurchaseData(purchaseData, purchaseData.product_id);
-      console.log(response, "response");
       if (response.HTTPStatus === 201) {
-        alert('Compra realizada com sucesso!');
         setIsModalOpen(false);
+        setIsThankYouScreenVisible(true);
       } else {
         alert('Erro ao realizar a compra, tente novamente.');
       }
     } catch (error) {
-      console.error('Erro ao enviar os dados da compra:', error);
       alert('Erro ao realizar a compra, tente novamente.');
     }
+  };
+
+  const handleCloseThankYouScreen = () => {
+    setIsThankYouScreenVisible(false);
   };
 
   useEffect(() => {
@@ -67,6 +70,9 @@ function App() {
         onClose={handleCloseModal}
         onSubmit={handleSubmitForm}
       />
+      {isThankYouScreenVisible && (
+        <ThankYouScreen onClose={handleCloseThankYouScreen} />
+      )}
     </div>
   );
 }

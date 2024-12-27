@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 
 const PurchaseForm = ({ productId, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -21,8 +20,6 @@ const PurchaseForm = ({ productId, onClose, onSubmit }) => {
   };
 
   const handleSubmit = (e) => {
-    console.log(productId, "modal produto");
-    console.log(formData, "data");
     e.preventDefault();
     onSubmit(formData);
   };
