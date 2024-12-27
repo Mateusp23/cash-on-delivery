@@ -16,7 +16,7 @@ const ProductCard = ({ product, onBuyClick }) => (
     )}
     <p className="text-gray-500 mb-4">{product.freight}</p>
     {product.best_choice && (
-      <span className="bg-yellow-300 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">
+      <span className="bg-yellow-300 text-yellow-800 text-xs mr-2 font-bold px-2 py-1 rounded-full">
         Melhor escolha
       </span>
     )}
