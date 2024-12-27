@@ -1,59 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { fetchPageData, postPurchaseData } from '../services/productService';
+import React from 'react';
 import VideoPlayer from '../components/VideoPlayer';
 import ProductList from '../components/ProductList';
 import { convertToEmbedUrl } from '../utils/videoConverter';
 import LoadingSpinner from '../components/LoadingSpinner';
 import PurchaseModal from '../components/PurchaseModal';
 import ThankYouScreen from './ThankYou';
+import { useProductData } from '../hooks/useProductData';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState(null);
-  const [isThankYouScreenVisible, setIsThankYouScreenVisible] = useState(false);
+  const {
+    data,
+    loading,
+    error,
+    isThankYouScreenVisible,
+    submitPurchase,
+    handleCloseThankYouScreen,
+    handleCloseModal,
+    isModalOpen,
+    setIsModalOpen,
+    setSelectedProductId,
+    selectedProductId,
+  } = useProductData();
 
   const handleBuyClick = (productId) => {
     setSelectedProductId(productId);
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   const handleSubmitForm = async (formData) => {
-    const { name, email, phone_number, street_number, street, district, city, state } = formData;
-    const purchaseData = {
-      ...formData,
-      product_id: selectedProductId,
-    };
-
-    try {
-      const response = await postPurchaseData(purchaseData, purchaseData.product_id);
-      if (response.HTTPStatus === 201) {
-        setIsModalOpen(false);
-        setIsThankYouScreenVisible(true);
-      } else {
-        alert('Erro ao realizar a compra, tente novamente.');
-      }
-    } catch (error) {
-      alert('Erro ao realizar a compra, tente novamente.');
-    }
+    await submitPurchase(formData, selectedProductId);
   };
 
-  const handleCloseThankYouScreen = () => {
-    setIsThankYouScreenVisible(false);
-  };
-
-  useEffect(() => {
-    fetchPageData()
-      .then((response) => setData(response.object[0]))
-      .catch((error) => console.error('Erro ao carregar os dados:', error));
-  }, []);
-
-  if (!data) {
+  if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <p>Erro ao carregar os dados: {error.message}</p>;
   }
 
   return (
@@ -65,14 +48,12 @@ function App() {
       />
       <ProductList products={data.products} onBuyClick={handleBuyClick} />
       <PurchaseModal
-        productId={selectedProductId}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSubmit={handleSubmitForm}
+        productId={selectedProductId}
       />
-      {isThankYouScreenVisible && (
-        <ThankYouScreen onClose={handleCloseThankYouScreen} />
-      )}
+      {isThankYouScreenVisible && <ThankYouScreen onClose={handleCloseThankYouScreen} />}
     </div>
   );
 }
