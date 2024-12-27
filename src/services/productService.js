@@ -10,12 +10,11 @@ export const fetchPageData = async () => {
   }
 };
 
-export const buyProduct = async (productId) => {
+export const postPurchaseData = async (data, productId) => {
   try {
-    const response = await api.post(`/buy/${productId}`);
+    const response = await api.post(`/buy/${productId}`, data);
     return response.data;
   } catch (error) {
-    console.error('Erro ao comprar produto:', error);
-    throw error;
+    throw new Error('Erro ao enviar os dados da compra');
   }
 };
